@@ -61,15 +61,15 @@ pnpm dev  or   npm run dev
 
 ### Signup Page
 
-![Signup](./screenshots/signup.png)
+![Signup](./screenshots/Signup.png)
 
 ### Login Page
 
-![Login](./screenshots/login.png)
+![Login](./screenshots/Login.png)
 
 ### Dashboard
 
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./screenshots/Dashboard.png)
 
 ### Tasks
 
