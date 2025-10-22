@@ -16,8 +16,8 @@ This repository contains the full source code for the PracSphere Student Develop
 
 1. Clone the repository:
 
-git clone https://github.com/yourusername/yourrepo.git
-cd yourrepo
+git clone https://github.com/PurandhareshwariKarre/pracsphere_asessment.git
+cd pracsphere_asessment
 
 2. Install dependencies:
 
@@ -61,31 +61,31 @@ pnpm dev  or   npm run dev
 
 ### Signup Page
 
-![Signup](./screenshots/Signup.png)
+![Signup](screenshots/Signup.png)
 
 ### Login Page
 
-![Login](./screenshots/Login.png)
+![Login](screenshots/Login.png)
 
 ### Dashboard
 
-![Dashboard](./screenshots/Dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
 ### Tasks
 
-![Tasks](./screenshots/Tasks.png)
+![Tasks](screenshots/Tasks.png)
 
 ### AddingTasks
 
-![AddingTasks](./screenshots/AddingTasks.png)
+![AddingTasks](screenshots/AddingTasks.png)
 
 ### Profile
 
-![Profile](./screenshots/Profile.png)
+![Profile](screenshots/Profile.png)
 
 ### Signout
 
-![Signout](./screenshots/Signout.png)
+![Signout](screenshots/Signout.png)
 
 
 

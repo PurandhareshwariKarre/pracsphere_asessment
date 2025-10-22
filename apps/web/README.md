@@ -16,8 +16,8 @@ This repository contains the full source code for the PracSphere Student Develop
 
 1. Clone the repository:
 
-git clone https://github.com/yourusername/yourrepo.git
-cd yourrepo
+git clone https://github.com/PurandhareshwariKarre/pracsphere_asessment.git
+cd pracsphere_asessment
 
 2. Install dependencies:
 
