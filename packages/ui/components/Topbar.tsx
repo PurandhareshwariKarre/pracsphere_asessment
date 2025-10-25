@@ -1,9 +1,6 @@
 "use client";
-
-interface User {
-  name?: string | null;
-  email?: string | null;
-}
+import * as React from "react";
+import type { User } from "@repo/types";
 
 interface TopbarProps {
   user?: User | null;

@@ -25,6 +25,21 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@repo/ui": [
+        "../../packages/ui"
+      ],
+      "@repo/utils": [
+        "../../packages/utils"
+      ],
+      "@repo/types": [
+        "../../packages/types"
+      ],
+      "@repo/config": [
+        "../../packages/config"
+      ],
+      "@repo/db": [
+        "../../packages/db"
       ]
     },
     "types": [
@@ -37,9 +52,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "next-env.d.ts"
-    // REMOVED ".next/types/**/*.ts"
-    ,
+    "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

@@ -1,93 +1,118 @@
-import clientPromise from "@/lib/mongodb";
+import { connectDB, Task, User } from "@repo/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
 
 export async function GET() {
-  const session = await getServerSession();
-  if (!session || !session.user || !session.user.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  try {
+    const session = await getServerSession();
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const client = await clientPromise;
-  const db = client.db("pracsphere");
-  const tasks = await db
-    .collection("tasks")
-    .find({ userId: session.user.email })
-    .toArray();
-  return NextResponse.json(tasks);
+    await connectDB();
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const tasks = await Task.find({ userId: user._id });
+    return NextResponse.json(tasks);
+  } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    console.error("Error in GET /api/tasks:", error);
+    return NextResponse.json({ error: "Internal server error", details: error?.message || "Unknown error" }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const session = await getServerSession();
-  if (!session || !session.user || !session.user.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getServerSession();
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = await request.json();
+    await connectDB();
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const newTask = await Task.create({
+      title: data.title,
+      description: data.description,
+      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+      status: data.status || "pending",
+      userId: user._id,
+    });
+
+    return NextResponse.json(newTask);
+  } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    console.error("Error in POST /api/tasks:", error);
+    return NextResponse.json({ error: "Internal server error", details: error?.message || "Unknown error" }, { status: 500 });
   }
-
-  const data = await request.json();
-
-  const client = await clientPromise;
-  const db = client.db("pracsphere");
-
-  const newTask = {
-    title: data.title,
-    description: data.description,
-    dueDate: data.dueDate ? new Date(data.dueDate) : null,
-    status: data.status || "pending",
-    userId: session.user.email,
-  };
-
-  const result = await db.collection("tasks").insertOne(newTask);
-
-  // MongoDB v4+ no longer returns 'ops', fetch the inserted doc manually
-  const insertedTask = await db.collection("tasks").findOne({ _id: result.insertedId });
-  return NextResponse.json(insertedTask);
 }
 
 export async function PATCH(request: Request) {
-  const session = await getServerSession();
-  if (!session || !session.user || !session.user.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getServerSession();
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id, updates } = await request.json();
+    await connectDB();
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: id, userId: user._id },
+      { $set: updates },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedTask);
+  } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    console.error("Error in PATCH /api/tasks:", error);
+    return NextResponse.json({ error: "Internal server error", details: error?.message || "Unknown error" }, { status: 500 });
   }
-
-  const { id, updates } = await request.json();
-
-  const client = await clientPromise;
-  const db = client.db("pracsphere");
-
-  // Use returnDocument: "after" instead of deprecated returnOriginal
-  const result = await db.collection("tasks").findOneAndUpdate(
-    { _id: new ObjectId(id), userId: session.user.email },
-    { $set: updates },
-    { returnDocument: "after" }
-  );
-
-  if (!result.value) {
-    return NextResponse.json({ error: "Task not found" }, { status: 404 });
-  }
-
-  return NextResponse.json(result.value);
 }
 
 export async function DELETE(request: Request) {
-  const session = await getServerSession();
-  if (!session || !session.user || !session.user.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await getServerSession();
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await request.json();
+    await connectDB();
+
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const result = await Task.deleteOne({
+      _id: id,
+      userId: user._id,
+    });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    console.error("Error in DELETE /api/tasks:", error);
+    return NextResponse.json({ error: "Internal server error", details: error?.message || "Unknown error" }, { status: 500 });
   }
-
-  const { id } = await request.json();
-
-  const client = await clientPromise;
-  const db = client.db("pracsphere");
-
-  const result = await db.collection("tasks").deleteOne({
-    _id: new ObjectId(id),
-    userId: session.user.email,
-  });
-
-  if (result.deletedCount === 0) {
-    return NextResponse.json({ error: "Task not found" }, { status: 404 });
-  }
-
-  return NextResponse.json({ success: true }, { status: 204 });
 }

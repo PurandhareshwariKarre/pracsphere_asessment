@@ -1,11 +1,9 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
+import { connectDB, User } from "@repo/db";
 import bcrypt from "bcrypt";
 
 const handler = NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -16,10 +14,11 @@ const handler = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const client = await clientPromise;
-        const db = client.db("pracsphere");
+        // Connect to DB using shared package
+        await connectDB();
+
         // Use lowercase for email lookup
-        const user = await db.collection("users").findOne({ email: credentials.email.toLowerCase() });
+        const user = await User.findOne({ email: credentials.email.toLowerCase() });
 
         console.log("User found:", user);
 

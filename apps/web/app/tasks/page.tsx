@@ -1,13 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
-interface Task {
-  _id: string;
-  title: string;
-  description: string;
-  dueDate?: string;
-  status: string;
-}
+import type { Task } from "@repo/types"; // Import Task from shared types
 
 const initialForm = { title: "", description: "", dueDate: "", status: "pending" };
 
@@ -132,51 +125,51 @@ export default function TasksPage() {
         {/* Form for Add/Edit */}
         {showForm && (
           <form onSubmit={handleFormSubmit} className="mb-6 p-6 border border-gray-300 rounded bg-white shadow-sm">
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              placeholder="Title"
-              className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
-              required
-            />
-            <input
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Description"
-              className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
-              required
-            />
-            <input
-              name="dueDate"
-              value={form.dueDate}
-              onChange={handleChange}
-              type="date"
-              className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
-              placeholder="Due Date"
-            />
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
-            </select>
-            <div className="flex gap-3">
-              <button type="submit" className="flex-1 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition">
-                {editingId ? "Update" : "Add"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                placeholder="Title"
+                className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+              <input
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Description"
+                className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                required
+              />
+              <input
+                name="dueDate"
+                value={form.dueDate}
+                onChange={handleChange}
+                type="date"
+                className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
+                placeholder="Due Date"
+              />
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="mb-3 w-full p-3 border border-gray-400 rounded focus:outline-none focus:ring-2 focus:ring-black"
               >
-                Cancel
-              </button>
-            </div>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+              </select>
+              <div className="flex gap-3">
+                <button type="submit" className="flex-1 px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition">
+                  {editingId ? "Update" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+                >
+                  Cancel
+                </button>
+              </div>
           </form>
         )}
 
